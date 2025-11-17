@@ -1,0 +1,62 @@
+name: Test
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.12]
+
+    steps:
+    # Check out the repository code
+    - uses: actions/checkout@v4
+
+    # Set up Python environment with specified version
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Install Poetry package manager for dependency management
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    # Install project dependencies for tests
+    - name: Install dependencies
+      run: poetry install --no-interaction --no-root
+
+    # Install system dependencies for PyQt6
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb libgl1 libegl1
+
+    # Execute unit tests
+    - name: Run unit tests
+      run: |
+        xvfb-run poetry run pytest tests/unit/ -v --cov=f32nodes --cov-report=xml
+
+    # Execute integration tests (skip if no tests exist)
+    - name: Run integration tests
+      run: |
+        if [ -n "$(find tests/integration/ -name "test_*.py" -o -name "*_test.py" 2>/dev/null)" ]; then
+          xvfb-run poetry run pytest tests/integration/ -v --cov-append --cov=f32nodes --cov-report=xml
+        else
+          echo "No integration tests found, skipping..."
+        fi
+
+    # # Upload combined test coverage results to Codecov
+    # - name: Upload coverage to Codecov
+    #   uses: codecov/codecov-action@v4
+    #   with:
+    #     file: ./coverage.xml
+    #     flags: f32nodes
+    #     name: f32nodes-coverage
+    #     fail_ci_if_error: false

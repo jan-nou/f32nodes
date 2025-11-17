@@ -1,0 +1,57 @@
+paths:
+  nodes: "nodes"
+
+nodes:
+
+  audioreader:
+    type: nodes.AudioFileReader
+    config:
+      file_path: "spectral_fx.wav"
+      frame_size: 1600
+
+  fft_analyzer:
+    type: nodes.FFTAnalysis
+    config:
+      fft_size: 4096
+      sample_rate: 48000
+      frame_size: 1600
+      overlap: 0.75
+      num_bands: 31
+
+
+  spectrum_mapper:
+    type: nodes.SpectrumMapper
+    config:
+      num_bands: 31
+      low_range: [0, 10]
+      mid_range: [10, 20]
+      low_db_min: -65.0
+      low_db_max: -8.0
+      mid_db_min: -55.0
+      mid_db_max: -12.0
+
+  rms_meter:
+    type: nodes.RmsPeakMeter
+    config:
+      frame_size: 1600
+      rms_smoothing: 0.25
+      peak_decay: 0.9
+
+  visualizer:
+    type: nodes.AudioVisualizer
+
+connections:
+
+  - from: [audioreader, "audio_out"]
+    to: [fft_analyzer, "audio_in"]
+  - from: [fft_analyzer, "spectrum"]
+    to: [spectrum_mapper, "spectrum"]
+  - from: [audioreader, "audio_out"]
+    to: [rms_meter, "audio_in"]
+
+  - from: [spectrum_mapper, "mid_energy"]
+    to: [visualizer, "background_change"]
+  - from: [spectrum_mapper, "low_energy"]
+    to: [visualizer, "rectangle_intensity"]
+  - from: [rms_meter, "rms"]
+    to: [visualizer, "delay_effect"]

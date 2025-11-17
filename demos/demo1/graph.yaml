@@ -1,0 +1,18 @@
+paths:
+  demo: "nodes"  # prefix -> module import path (relative to this YAML file)
+
+nodes:
+  modulator:
+    type: demo.ModulationSignal  # resolves to nodes.ModulationSignal
+    config:
+      frequency_hz: 0.4 # overwrite default config values
+      amplitude: 0.9
+  carrier:
+    type: demo.ModulatedWave
+    config:
+      carrier_frequency_hz: 1.6
+      base_amplitude: 1.0
+
+connections:
+  - from: [modulator, "modulation"]  # output port name
+    to: [carrier, "amplitude"]       # input port name

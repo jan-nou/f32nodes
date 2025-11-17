@@ -1,0 +1,29 @@
+paths:
+  demo: "nodes"
+
+nodes:
+  driver:
+    type: demo.LatticeDriver
+    config:
+      phase_rate: 0.31
+      drift_rate: 0.14
+
+  field:
+    type: demo.MirageField
+    config:
+      resolution: 200
+
+  display:
+    type: demo.MirageDisplay
+    config:
+      resolution: 200
+
+connections:
+  - from: [driver, "phase_wave"]
+    to: [field, "phase_wave"]
+  - from: [driver, "drift_scalar"]
+    to: [field, "drift_scalar"]
+  - from: [field, "mirage_map"]
+    to: [display, "mirage_map"]
+  - from: [field, "density_map"]
+    to: [display, "density_map"]

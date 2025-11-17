@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "f32nodes"
+version = "0.1.0"
+description = "Float32-focused node graph runtime with PyQt visualizer and real-time instrumentation."
+authors = ["Jan Nouruzi-Pur"]
+readme = "README.md"
+packages = [{include = "f32nodes"}]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+numpy = ">=1.26,<2.0"
+pyyaml = ">=6.0.1,<7.0"
+PyQt6 = ">=6.6,<7.0"
+opencv-python = ">=4.8.1.78,<5.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+pytest-cov = "*"
+ruff = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

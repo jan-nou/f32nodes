@@ -1,0 +1,52 @@
+paths:
+  test: "tests.integration.test_backend"
+
+nodes:
+  # Source node with config
+  source1:
+    type: test.Source
+    config:
+      value: 10.0
+
+  # Another source for multi-input testing
+  source2:
+    type: test.Source
+    config:
+      value: 5.0
+
+  # Processor with custom config
+  processor1:
+    type: test.Process
+    config:
+      multiplier: 2.0
+
+  # Processor with default config (should use multiplier: 1.0)
+  processor2:
+    type: test.Process
+
+  # Combiner node (no config needed)
+  combiner1:
+    type: test.Combine
+
+  # Final sink
+  sink1:
+    type: test.Sink
+
+connections:
+  # Simple chain: source1 -> processor1
+  - from: [source1, "out"]
+    to: [processor1, "in"]
+
+  # Parallel processing: source2 -> processor2
+  - from: [source2, "out"]
+    to: [processor2, "in"]
+
+  # Merge results: processor1 + processor2 -> combiner1
+  - from: [processor1, "out"]
+    to: [combiner1, "a"]
+  - from: [processor2, "out"]
+    to: [combiner1, "b"]
+
+  # Final output: combiner1 -> sink1
+  - from: [combiner1, "out"]
+    to: [sink1, "in"]
