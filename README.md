@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/f32nodes.svg)](https://pypi.org/project/f32nodes/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/f32nodes.svg)](https://pypi.org/project/f32nodes/)
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
-[![Tests](https://github.com/jan-nou/f32nodes/actions/workflows/test.yml/badge.svg)](https://github.com/jan-nou/f32nodes/actions/workflows/test.yml)
+[![CI](https://github.com/jan-nou/f32nodes/actions/workflows/ci.yml/badge.svg)](https://github.com/jan-nou/f32nodes/actions/workflows/ci.yml)
 
 ## Overview
 
