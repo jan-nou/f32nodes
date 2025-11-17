@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "f32nodes"
-version = "0.1.0"
+version = "0.1.1"
 description = "Float32-focused node graph runtime with PyQt visualizer and real-time instrumentation."
 authors = ["Jan Nouruzi-Pur"]
 readme = "README.md"
