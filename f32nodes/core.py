@@ -244,10 +244,13 @@ class Graph:
             node for node in self.nodes if not get_downstream_nodes(node)
         ]
 
-        # Report optional port defaults
+        # Report optional port defaults only for ports that truly have no connection
+        connected_inputs = {
+            (conn["target_node"], conn["target_port"]) for conn in self.connections
+        }
         for node in self.nodes:
             for port_name, port in node.input_ports.items():
-                if port.default_value is not None and port.value is None:
+                if port.default_value is not None and (node, port_name) not in connected_inputs:
                     print(
                         f"Node '{node.name}': Optional port '{port_name}' not connected, using default value {port.default_value}"
                     )
