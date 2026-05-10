@@ -83,7 +83,7 @@ Streams the bundled `spectral_fx.wav`, computes octave-band energy plus RMS, and
 - **Editable install**:
 
   ```bash
-  python -m venv .venv
+  python3 -m venv .venv
   source .venv/bin/activate
   pip install -U pip
   pip install -e .

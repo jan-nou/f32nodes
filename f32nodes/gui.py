@@ -319,7 +319,11 @@ class ZoomableGraphicsView(QGraphicsView):
             super().mouseReleaseEvent(event)
 
     def wheelEvent(self, event: QWheelEvent):
-        zoom_factor = 1.15 if event.angleDelta().y() > 0 else 1.0 / 1.15
+        dy = event.angleDelta().y()
+        if dy == 0:
+            event.ignore()
+            return
+        zoom_factor = 1.15 if dy > 0 else 1.0 / 1.15
         new_scale = max(0.1, min(5.0, self.current_scale * zoom_factor))
         actual_factor = new_scale / self.current_scale
         self.current_scale = new_scale
@@ -431,6 +435,7 @@ class AdaptiveNodeGraphics(QGraphicsRectItem):
         title_text = QGraphicsTextItem(self.name, self)
         title_text.setPos(20, 10)
         title_text.setDefaultTextColor(self.TEXT_COLOR)
+        title_text.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
         font = QFont(self.FONT_FAMILY, self.FONT_SIZE)
         font.setBold(True)
         title_text.setFont(font)
@@ -476,6 +481,7 @@ class AdaptiveNodeGraphics(QGraphicsRectItem):
         # Port label (left of port, vertically centered)
         port_text = QGraphicsTextItem(port_name, self)
         port_text.setDefaultTextColor(self.TEXT_COLOR)
+        port_text.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
         font = QFont(self.FONT_FAMILY, self.FONT_SIZE)
         font.setBold(True)
         port_text.setFont(font)
@@ -503,6 +509,7 @@ class AdaptiveNodeGraphics(QGraphicsRectItem):
         # Port label (right of port, vertically centered)
         port_text = QGraphicsTextItem(port_name, self)
         port_text.setDefaultTextColor(self.TEXT_COLOR)
+        port_text.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
         font = QFont(self.FONT_FAMILY, self.FONT_SIZE)
         font.setBold(True)
         port_text.setFont(font)
