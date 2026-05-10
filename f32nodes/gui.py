@@ -320,17 +320,10 @@ class ZoomableGraphicsView(QGraphicsView):
 
     def wheelEvent(self, event: QWheelEvent):
         zoom_factor = 1.15 if event.angleDelta().y() > 0 else 1.0 / 1.15
-        new_scale = self.current_scale * zoom_factor
-
-        # Clamp zoom
-        if new_scale < 0.1:
-            new_scale = 0.1
-        elif new_scale > 5.0:
-            new_scale = 5.0
-
+        new_scale = max(0.1, min(5.0, self.current_scale * zoom_factor))
+        actual_factor = new_scale / self.current_scale
         self.current_scale = new_scale
-        self.resetTransform()
-        self.scale(self.current_scale, self.current_scale)
+        self.scale(actual_factor, actual_factor)
         event.accept()
 
 
