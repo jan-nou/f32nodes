@@ -3,6 +3,7 @@ import yaml
 import importlib
 import os
 import sys
+import traceback
 import inspect
 import numpy as np
 from collections import defaultdict, deque
@@ -227,7 +228,8 @@ class Runner(QThread):
                 self.data_ready.emit(port_results)
                 gui_time = time.time() - gui_start
             except Exception as e:
-                print(f"Computation error: {e}")
+                traceback.print_exc(file=sys.stdout)
+                print(f"Computation error, stopping the run loop: {e}")
                 break
 
             total_frame_time = time.time() - frame_start

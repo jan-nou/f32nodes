@@ -32,6 +32,6 @@ jobs:
     - name: Install dependencies
       run: poetry install --no-interaction --no-root
 
-    # Run ruff linting on source code
+    # Run ruff linting on source code, tests and demos
     - name: Lint with ruff
-      run: poetry run ruff check f32nodes/
+      run: poetry run ruff check f32nodes/ tests/ demos/

@@ -210,6 +210,21 @@ class TestPortShapeRangeValidation:
         with pytest.raises(ValueError, match="range"):
             port.set_value(invalid_max)
 
+    def test_write_output_errors_name_the_node_and_port(self):
+        class Source(Node):
+            def define_config(self):
+                return {}
+
+            def define_ports(self):
+                self.add_output_port("level", shape=(), min_val=0.0, max_val=1.0)
+
+            def compute(self):
+                pass
+
+        node = Source("my_source")
+        with pytest.raises(ValueError, match="my_source.*level"):
+            node.write_output("level", np.float32(5.0))
+
     def test_port_scalar_uses_empty_tuple_shape(self):
         """Scalar ports should use shape=() (empty tuple)"""
         port = Port("gain", shape=(), min_val=0.0, max_val=10.0)
@@ -376,3 +391,13 @@ class TestGraphConnectivity:
 
         # Should not raise once we enforce a single connected component.
         graph.finalize_graph()
+
+    def test_single_node_graph_is_allowed(self):
+        from f32nodes.core import Graph
+
+        graph = Graph()
+        graph.add(self._make_source_node("only"))
+        graph.finalize_graph()
+
+        port_results, _ = graph.compute()
+        assert port_results[0]["node"] == "only"

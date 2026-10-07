@@ -5,16 +5,94 @@
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
 [![CI](https://github.com/jan-nou/f32nodes/actions/workflows/ci.yml/badge.svg)](https://github.com/jan-nou/f32nodes/actions/workflows/ci.yml)
 
-## Overview
+**See every wire of your Python dataflow graph live.**
 
-f32nodes integrates a visual programming workflow with plain Python modules into a live-computation environment tuned for multi-modal real-time data streams.
+Write nodes as plain Python classes, wire them in a YAML file, and f32nodes runs the graph in real time and draws a live gauge, waveform or heatmap for every port. No UI code needed.
+
+![Wavefields demo](https://raw.githubusercontent.com/jan-nou/f32nodes/main/demos/demo2/demo2.gif)
+
+> **Not a drag-and-drop editor.** The graph is defined in code and YAML; the window is a live inspector where you can move nodes around and watch every signal.
+
+## Hello world
+
+Two nodes: a sine source and a trace that keeps the last 200 samples. See [`demos/demo1`](https://github.com/jan-nou/f32nodes/tree/main/demos/demo1) for a fully commented version.
+
+`nodes.py`
+
+```python
+import math, time
+import numpy as np
+from f32nodes.core import Node
+
+
+class Sine(Node):
+    def define_config(self):
+        return {"hz": 0.5}
+
+    def setup(self):
+        self.t0 = time.perf_counter()
+
+    def define_ports(self):
+        self.add_output_port("out", shape=(), min_val=-1.0, max_val=1.0)  # scalar -> gauge
+
+    def compute(self):
+        t = time.perf_counter() - self.t0
+        self.write_output("out", np.float32(math.sin(math.tau * self.config["hz"] * t)))
+
+
+class Trace(Node):
+    def define_config(self):
+        return {}
+
+    def setup(self):
+        self.history = np.zeros(200, dtype=np.float32)
+
+    def define_ports(self):
+        self.add_input_port("in", shape=(), min_val=-1.0, max_val=1.0)
+        self.add_output_port("history", shape=(200,), min_val=-1.0, max_val=1.0)  # 1D -> waveform
+
+    def compute(self):
+        self.history = np.roll(self.history, -1)
+        self.history[-1] = self.read_input("in")
+        self.write_output("history", self.history)
+```
+
+`graph.yaml`
+
+```yaml
+paths:
+  my: "nodes"
+
+nodes:
+  sine:
+    type: my.Sine
+    config: {hz: 0.5}
+  trace:
+    type: my.Trace
+
+connections:
+  - from: [sine, "out"]
+    to: [trace, "in"]
+```
+
+`main.py`
+
+```python
+from f32nodes import Runner
+
+Runner("graph.yaml").start_app()
+```
+
+Run `pip install f32nodes && python main.py`.
+
+## Overview
 
 ### Core Features
 - **Python-native nodes**: each node is a plain Python subclass representing one step of computation. Nodes declare typed ports and exchange `numpy.float32` tensors.
 - **YAML graph spec**: node instances, configs, and connections sit in a YAML file; the loader resolves import prefixes relative to that file and wires ports automatically.
 - **Strict graph & port contracts**: preflight rejects unconnected nodes plus shape/range/cycle errors, enforces a single connected DAG, and port writes continue to enforce dtype, shape, and limits during execution.
-- **Zero-setup visuals**: the strict port contracts drive automatic gauges, waveforms, heatmaps, or RGBA renderers per output shape—with renderer-only normalization and no UI setup required.
-- **Performance-minded UI**: the PyQt graph view avoids per-frame allocation churn so visualizations stay responsive alongside the runtime.
+- **Automatic visuals**: the port contracts select a renderer per output shape (gauge, waveform, heatmap or RGBA texture), so nodes contain no UI code. Normalization happens in the renderer only.
+- **Low-overhead UI**: the PyQt graph view avoids per-frame allocations so rendering stays light next to the runtime.
 - **Runtime instrumentation**: the runner targets a configurable FPS, records backend/GUI/frame timings, samples per-node costs, and flags when the schedule drifts.
 - **Persistent layout**: the PyQt6 view stores node positions and viewport state per graph file so the workspace survives restarts.
 
@@ -62,19 +140,19 @@ A low-frequency scalar modulates a waveform generator. The entry point for learn
 - `graph.yaml` – initializes & configures nodes, then connects the graph.
 - `main.py` – loads and runs the graph.
 
-![Demo 1 screenshot](demos/demo1/demo1.gif)
+![Demo 1 screenshot](https://raw.githubusercontent.com/jan-nou/f32nodes/main/demos/demo1/demo1.gif)
 
 ### Demo 2 – Wavefields
 
 Coupled oscillators drive a drifting 2D height map, while the display node remixes the field into density, height, and a stylized RGBA texture.
 
-![Demo 2 screenshot](demos/demo2/demo2.gif)
+![Demo 2 screenshot](https://raw.githubusercontent.com/jan-nou/f32nodes/main/demos/demo2/demo2.gif)
 
 ### Demo 3 – Audio Nodes
 
 Streams the bundled `spectral_fx.wav`, computes octave-band energy plus RMS, and drives an `AudioVisualizer` node whose three abstract controls (“background change”, “rectangle intensity”, “delay effect”) accept any scalar signal you patch into them. `soundfile` is required for decoding; `sounddevice` enables optional playback (toggle via `enable_playback`). 
 
-![Demo 3 screenshot](demos/demo3/demo3.gif)
+![Demo 3 screenshot](https://raw.githubusercontent.com/jan-nou/f32nodes/main/demos/demo3/demo3.gif)
 
 ## Development
 - **Tests**: run `pytest`.

@@ -87,7 +87,10 @@ class Node(ABC):
     def write_output(self, port_name, value):
         if port_name not in self.output_ports:
             raise KeyError(f"Output port '{port_name}' not found")
-        self.output_ports[port_name].set_value(value)
+        try:
+            self.output_ports[port_name].set_value(value)
+        except (TypeError, ValueError) as error:
+            raise type(error)(f"{self.name}.{port_name}: {error}") from error
 
     @abstractmethod
     def define_config(self):
@@ -173,6 +176,8 @@ class Graph:
             ]
 
         def ensure_all_nodes_connected():
+            if len(self.nodes) == 1:
+                return
             connected = {conn["source_node"] for conn in self.connections} | {
                 conn["target_node"] for conn in self.connections
             }

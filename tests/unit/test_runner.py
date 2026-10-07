@@ -52,6 +52,22 @@ nodes:
         mock_gui.initialize.assert_called_once_with(mock_graph)
 
 
+class TestRunnerErrorReporting:
+    def test_compute_error_prints_traceback(self, capsys):
+        """A crashing node must leave a traceback, not a one-line message"""
+        runner = Runner.__new__(Runner)
+        super(Runner, runner).__init__()
+        runner.fps = 60
+        runner.graph = Mock()
+        runner.graph.compute.side_effect = RuntimeError("boom in node")
+
+        runner.run()
+
+        output = capsys.readouterr().out
+        assert "Traceback" in output
+        assert "boom in node" in output
+
+
 class TestRunnerBackgroundComputation:
     def test_runner_background_thread_signal_emission(self):
         """Test that Runner runs computation in background and emits signals with data"""

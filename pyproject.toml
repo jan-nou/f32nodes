@@ -6,10 +6,28 @@ authors = ["Jan Nouruzi-Pur"]
 readme = "README.md"
 packages = [{include = "f32nodes"}]
 license = "Apache-2.0"
+homepage = "https://github.com/jan-nou/f32nodes"
+repository = "https://github.com/jan-nou/f32nodes"
+keywords = ["dataflow", "node-graph", "pyqt6", "real-time", "numpy", "signal-processing", "visualization", "creative-coding"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/jan-nou/f32nodes/issues"
 
 [tool.poetry.dependencies]
 python = ">=3.12"
-numpy = ">=1.26,<2.0"
+numpy = ">=1.26,<3.0"
 pyyaml = ">=6.0.1,<7.0"
 PyQt6 = ">=6.6,<7.0"
 opencv-python = ">=4.8.1.78,<5.0"
