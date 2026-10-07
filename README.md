@@ -5,9 +5,9 @@
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
 [![CI](https://github.com/jan-nou/f32nodes/actions/workflows/ci.yml/badge.svg)](https://github.com/jan-nou/f32nodes/actions/workflows/ci.yml)
 
-**See every wire of your Python dataflow graph live.**
+**f32nodes is a code-first dataflow runtime for Python with a live view of every wire.**
 
-Write nodes as plain Python classes, wire them in a YAML file, and f32nodes runs the graph in real time and draws a live gauge, waveform or heatmap for every port. No UI code needed.
+Nodes are Python classes, the graph is a YAML file, and each port gets a gauge, waveform or heatmap automatically.
 
 ![Wavefields demo](https://raw.githubusercontent.com/jan-nou/f32nodes/main/demos/demo2/demo2.gif)
 
