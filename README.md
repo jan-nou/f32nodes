@@ -150,7 +150,9 @@ Coupled oscillators drive a drifting 2D height map, while the display node remix
 
 ### Demo 3 – Audio Nodes
 
-Streams the bundled `spectral_fx.wav`, computes octave-band energy plus RMS, and drives an `AudioVisualizer` node whose three abstract controls (“background change”, “rectangle intensity”, “delay effect”) accept any scalar signal you patch into them. `soundfile` is required for decoding; `sounddevice` enables optional playback (toggle via `enable_playback`). 
+Streams the bundled `spectral_fx.wav`, computes octave-band energy plus RMS, and drives an `AudioVisualizer` node whose three abstract controls (“background change”, “rectangle intensity”, “delay effect”) accept any scalar signal you patch into them. `soundfile` is required for decoding; `sounddevice` enables optional playback (toggle via `enable_playback`).
+
+> **Linux:** `sounddevice` needs the system PortAudio library, which pip does not install. Run `sudo apt install libportaudio2` (Debian/Ubuntu) first; without it the demo stops with `PortAudio library not found`. To run without sound, add `enable_playback: false` to the `audioreader` config in `graph.yaml`.
 
 ![Demo 3 screenshot](https://raw.githubusercontent.com/jan-nou/f32nodes/main/demos/demo3/demo3.gif)
 
